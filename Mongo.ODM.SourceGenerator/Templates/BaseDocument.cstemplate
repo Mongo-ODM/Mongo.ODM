@@ -1,0 +1,47 @@
+using Mongo.ODM;
+using MongoDB.Driver.Fluent;
+namespace {{ Namespace }};
+
+public partial class {{ ClassName }} : {{ ClassBase }}
+{
+
+    public {{ ClassName }}()
+    {
+        CleanDocument = this;
+    }
+
+    //[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public async Task<FluentUpdateDefinitionBuilder<{{ ClassName }}>> GetFluentUpdateDefinitionBuilderAsync()
+    {
+        var current = ({{ ClassName }})CleanDocument;
+        var update = FluentUpdateDefinitionBuilder<{{ ClassName }}>.New();
+        {{ for prop in Props }}
+        if( {{prop}} != current.{{ prop }} )
+            update.Set(i => i.{{prop}}, {{prop}});
+        {{ end }}
+
+        return update;
+
+    }
+
+    //[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public async Task<UpdateDefinitionBuilder<{{ ClassName }}>> GetUpdateDefinitionBuilderAsync()
+    {
+        
+        return (await GetFluentUpdateDefinitionBuilder()).Build();
+
+    }
+
+    //[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public bool _isDirty()
+    {
+        var current = ({{ ClassName }})CleanDocument;
+        {{ for prop in Props }}
+        if( {{prop}} != current.{{ prop }} )
+            return false;
+        {{ end }}
+
+        return true;
+
+    }
+}
